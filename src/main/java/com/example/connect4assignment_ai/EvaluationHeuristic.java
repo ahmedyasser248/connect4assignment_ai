@@ -278,4 +278,133 @@ public class EvaluationHeuristic {
         }
         return evaluationScore;
     }
+    private int [] countFoursInSlidingWindow(BitSet []slidingWindow,BitSet computerColor){
+        int noComputerDiscs=0;
+        int noOpponentDiscs=0;
+        int [] scores=new int[2];
+        for(int i=0;i<slidingWindow.length;i++){
+            if(slidingWindow[i].equals(computerColor)){
+                noComputerDiscs++;
+            }
+            else if (!slidingWindow[i].equals(EMPTY)){
+                noOpponentDiscs++;
+            }
+        }
+        if(noComputerDiscs>0 && noOpponentDiscs==0){
+            if(noComputerDiscs==4) {
+                scores[0]++;
+            }
+        }
+        else if (noComputerDiscs==0 && noOpponentDiscs>0){
+            if(noOpponentDiscs==4) {
+                scores[1]++;
+            }
+        }
+
+        return scores;
+    }
+    int [] countFours(BitSet boardState,BitSet computerColor){
+        int [] scores=new int[2];
+        int [] temp;
+        temp=countFoursByColumn(boardState,computerColor);
+        scores[0]+=temp[0];
+        scores[1]+=temp[1];
+        temp=countFoursByRow(boardState,computerColor);
+        scores[0]+=temp[0];
+        scores[1]+=temp[1];
+        temp=countFoursByRightDiagonal(boardState,computerColor);
+        scores[0]+=temp[0];
+        scores[1]+=temp[1];
+        temp=countFoursByLeftDiagonal(boardState,computerColor);
+        scores[0]+=temp[0];
+        scores[1]+=temp[1];
+        return scores;
+    }
+    int [] countFoursByColumn(BitSet boardState,BitSet computerColor){
+        int [] scores=new int[2];
+        for(int col=0;col<numOfBoardColumns;col++){
+
+            BitSet currentDiscColor=boardState.get((5*numOfBitsPerRow+boardCellSize*col),(5*numOfBitsPerRow+boardCellSize*col)+boardCellSize);//5 is the index of the last row
+            if(currentDiscColor.equals(EMPTY)){
+                continue;
+            }
+            int numOfConnectedDiscs=1;
+            for(int row=4;row>=0;row--){
+                BitSet colorOfDiscAboveCurrent=boardState.get((row*numOfBitsPerRow+boardCellSize*col),(row*numOfBitsPerRow+boardCellSize*col)+boardCellSize);
+                if(colorOfDiscAboveCurrent.equals(currentDiscColor)){
+                    numOfConnectedDiscs++;
+                }
+                else if (colorOfDiscAboveCurrent.equals(EMPTY)){
+                    break;
+                }
+                else {
+                    currentDiscColor=colorOfDiscAboveCurrent;
+                    numOfConnectedDiscs=1;
+                }
+
+                if(numOfConnectedDiscs>=4){
+                    if(currentDiscColor.equals(computerColor)) {
+                        scores[0]++;
+                    }
+                    else {
+                        scores[1]++;
+                    }
+                }
+            }
+        }
+        return scores;
+    }
+    int [] countFoursByRow(BitSet boardState,BitSet computerColor){
+        int [] scores=new int[2];
+        for(int row =numOfBoardRows-1;row>=0;row--){
+            for(int startingColumnIndex=0;startingColumnIndex<4;startingColumnIndex++){
+                int [] result=countFoursInSlidingWindow(createSlidingWindowByRow(boardState,row,startingColumnIndex),computerColor);
+                scores[0]+=result[0];
+                scores[1]+=result[1];
+            }
+        }
+        return scores;
+    }
+    int [] countFoursByRightDiagonal(BitSet boardState,BitSet computerColor){
+        int [] scores=new int[2];
+        for(int row=3;row<numOfBoardRows;row++){
+            int numberOfIterations=(row+1)-4+1; //In each iteration 4 rows are visited ,then the number of iterations = current row NUMBER (row index +1) - 4 +1
+            for(int i=0;i<numberOfIterations;i++){
+
+                int result[]=countFoursInSlidingWindow(createSlidingWindowByRightDiagonal(boardState,row-i,i),computerColor);
+                scores[0]+=result[0];
+                scores[1]+=result[1];
+            }
+        }
+        for(int col=1;col<=3;col++){
+            int numberOfIterations=4-(col+1)+1;
+            for(int i=0;i<numberOfIterations;i++){
+                int result[]=countFoursInSlidingWindow(createSlidingWindowByRightDiagonal(boardState,numOfBoardRows-1-i,col+i),computerColor);
+                scores[0]+=result[0];
+                scores[1]+=result[1];
+            }
+        }
+
+        return scores;
+    }
+    int [] countFoursByLeftDiagonal(BitSet boardState,BitSet computerColor){
+        int [] scores=new int[2];
+        for(int row=3;row<numOfBoardRows;row++){
+            int numberOfIterations=(row+1)-4+1; //In each iteration 4 rows are visited ,then the number of iterations = current row NUMBER (row index +1) - 4 +1
+            for(int i=0;i<numberOfIterations;i++){
+                int result[]=countFoursInSlidingWindow(createSlidingWindowByLeftDiagonal(boardState,row-i,numOfBoardColumns-1-i),computerColor);
+                scores[0]+=result[0];
+                scores[1]+=result[1];
+            }
+        }
+        for(int col=numOfBoardColumns-2;col>=3;col--){
+            int numberOfIterations=(col+1)-4+1;
+            for(int i=0;i<numberOfIterations;i++){
+                int result[]=countFoursInSlidingWindow(createSlidingWindowByLeftDiagonal(boardState,numOfBoardRows-1-i,col-i),computerColor);
+                scores[0]+=result[0];
+                scores[1]+=result[1];
+            }
+        }
+        return scores;
+    }
 }

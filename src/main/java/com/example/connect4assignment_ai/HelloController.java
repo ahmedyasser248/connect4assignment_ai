@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -24,12 +25,17 @@ public class HelloController{
     static int select;
     //store height of each column;
     int[] columnsHeight =new int[7];
-    //0 empty 1 player1  2 computer
-    int[][] gridInt = new int[6][7];
-    int turn = 0;
+    //depth chosen by player
+    static int depth = 3;
     GameRunner gameRunner = new GameRunner();
     @FXML
     GridPane grid;
+
+    @FXML
+    Label computer;
+
+    @FXML
+    Label player;
 
 
     @FXML
@@ -58,11 +64,12 @@ public class HelloController{
 
         PauseTransition pauseTransition = new PauseTransition(Duration.millis(200));
         pauseTransition.setOnFinished(actionEvent -> {
-            int computerMove[]= gameRunner.computerMove(realr,realc, 3, select!=1);
-            Circle r = getDesiredCircleByRowAndColumn(computerMove[0],computerMove[1]);
-
-            columnsHeight[computerMove[1]]++;
+            int results[]= gameRunner.computerMove(realr,realc, depth, select!=1);
+            Circle r = getDesiredCircleByRowAndColumn(results[0],results[1]);
+            columnsHeight[results[1]]++;
             r.setFill(Color.BLUE);
+            computer.setText(results[2]+"");
+            player.setText(results[3]+"");
         });
         pauseTransition.play();
 
@@ -78,11 +85,7 @@ public class HelloController{
         }
         return (Circle) result;
     }
-    BitSet convertIntArrayToBitSet(){
-        BitSet result = new BitSet();
 
-        return result;
-    }
 
 
 }

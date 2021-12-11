@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="641.0" prefWidth="884.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connect4assignment_ai.HelloController">
    <children>
@@ -71,5 +73,25 @@
             <Circle fill="WHITE" layoutX="41.0" layoutY="46.0" onMouseClicked="#clickedOnCircle" radius="31.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
          </children>
       </GridPane>
+      <Label layoutX="229.0" layoutY="539.0" text="player1" >
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="578.0" layoutY="539.0" text="compu">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+      <Label layoutX="256.0" layoutY="589.0" text="0" fx:id="player">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="600.0" layoutY="589.0" text="0" fx:id="computer">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

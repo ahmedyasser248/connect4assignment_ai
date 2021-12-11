@@ -1,6 +1,7 @@
 package com.example.connect4assignment_ai;
 
 import eu.hansolo.tilesfx.tools.TreeNode;
+import javafx.scene.paint.Color;
 
 import java.io.Console;
 import java.util.BitSet;
@@ -11,6 +12,8 @@ public class GameRunner {
     BitSet RED=new BitSet(2);
     BitSet YELLOW=new BitSet(2);
     BitSet currentState;
+    BitSet currentMoveScore;
+    EvaluationHeuristic evaluationHeuristic = new EvaluationHeuristic();
 
     GameRunner(){
         this.RED.set(1);
@@ -34,12 +37,18 @@ public class GameRunner {
         computerAgent.minMax(currentState,0,k,pruning);
 
 
-        treeNode.printTree(computerAgent.root);
+        treeNode.traversePreOrder(computerAgent.root);
         int[] indices = computerAgent.moveIndices(computerAgent.bestMoveState,currentState);
         currentState = makeMove(currentState,indices[0],indices[1],0);
-
-        return indices;
+        int[]score =evaluationHeuristic.countFours(currentState,evaluationHeuristic.YELLOW);
+        int arr[]=new int[4];
+        arr[0]=indices[0];
+        arr[1]=indices[1];
+        arr[2]=score[0];
+        arr[3]=score[1];
+        return arr;
     }
+
     void printState(BitSet state){
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
